@@ -1,0 +1,115 @@
+\section{Local supports and expansions for cut generation}
+\label{sec:support_expansion}
+
+
+As mentioned in Section \ref{sec:bdd_size_structures}, the compact DD encoding can be exponential in size for generic BPO instances. Thus, constructing such a DD and generating cuts with it can be impractical. With that in mind, we develop three different procedures that build compact DDs for portions of the problem (i.e., local supports for a hypergraph $ G = (V,E)$) with the aim of returning strong valid inequalities for the original problem. 
+
+Formally, a \emph{local support} for $G=(V,E)$ is a hypergraph $G_S=(V_S,E_S)$ chosen from $G$, typically with $V_S\subseteq V$ and $E_S\subseteq E$, which are also known as \emph{partial hypergraphs}~\cite{del2017polyhedral}. If $E_S$ has all the hyperedges that are subsets of $V_S$ (i.e., $E_S=\{e\in E : e\subseteq V_S\}$), then we say that $G_S$ is a \emph{section hypergraph} of $G$ induced by $V_S$. Once a support $G_S$ has been chosen, we build a compact DD for it and use the target-cut CGLP introduced in Section~\ref{sec:dd_separation} to create valid inequalities. The generated cut can be lifted back to the full variable
+space by \emph{zero lifting}~\cite{del2017polyhedral} (i.e., setting coefficients of variables outside $V_S\cup E_S$ to zero).
+
+We now describe three alternatives for creating this local support. To summarize, the \emph{fixed-support} strategy considers supports from known valid inequalities in the literature (i.e., two-links, flowers, and $\beta$-cycles) and serves as a validation benchmark. The \emph{expanded-support} strategy expands over fixed-supports by considering additional edges with the goal of exposing nearby interactions that the literature support alone omits. Lastly, the \emph{partition-support} strategy partitions the set of vertices and builds section hypergraphs induced by each partition to leverage existing theoretical results. 
+
+%We use three local-support regimes. The fixed-support regime builds the DD on the same support that gives a violated literature inequality, serving as a validation benchmark. The expanded-support regime grows that seed by overlap before building the DD, with the goal of exposing nearby interactions that the literature support alone omits. The partition regime does not start from a named literature structure; instead, it builds supports from vertex blocks and the hyperedges fully contained in each block.
+
+
+\paragraph{Fixed-support strategy.} For a given fractional point $\bar \bz$, this strategy builds compact DDs based on a known violated valid inequality. Specifically, we heuristically search for violated two-link, flower, and $\beta$-cycle inequalities and create a DD for the corresponding local support for any such violated cuts. To do so, we work in the edge-overlap graph of $G$, whose nodes are the hyperedges and adjacency is defined by nonempty overlap. Starting from a set of sampled edges, we build small-overlap neighborhoods and mine candidate local supports within those neighborhoods. A candidate's support is passed to the DD separator only if its associated literature inequality is violated at the current relaxation point $\bar \bz$. We note that, given its nature, this strategy is merely a validation benchmark for our DD-based CGLP.
+
+% Algorithm~\ref{alg:literature_fixed_support_mode} describes the fixed-support regime.
+% Its input is a violated seed support $G_S$, such as the support of a two-link, flower,
+% or odd $\beta$-cycle inequality.
+
+% \begin{algorithm}[H]
+% \caption{\textsc{LiteratureFixedSupportMode}}
+% \label{alg:literature_fixed_support_mode}
+% \begin{algorithmic}[1]
+% \Require Hypergraph $G=(V,E)$, fractional point $\bar \bz$, and  violated seed support $G_S$
+% \State Build a compact exact DD over $G_S$
+% \State Create a valid inequality that separates $\bar \bz$ form $MP_{G_S}$ using \eqref{model:target-cut} and zero-lift it
+% \end{algorithmic}
+% \end{algorithm}
+
+% In this mode, the DD should be interpreted as a black-box search procedure over the same
+% local multilinear polytope that motivates the literature cut. In our implementation, the
+% seed support is obtained by mining violated literature structures heuristically. We work
+% in the edge-overlap graph of $G$, whose nodes are the hyperedges and whose adjacency is
+% defined by nonempty overlap. Starting from sampled anchor edges, the implementation
+% builds small overlap neighborhoods and mines candidate two-link, flower, and odd
+% $\beta$-cycle structures inside those neighborhoods. A candidate structure is passed to
+% the DD separator only if its associated literature inequality is violated at the current
+% relaxation point $\bar \bz$. Thus, fixed support is a validation benchmark for the
+% target-cut model rather than the main source of expected strength gains.
+
+\paragraph{Expanded-support strategy.} This strategy is an extension of our fixed-support approach, with the aim of exposing nearby interactions that are not visible from the support of simple structures (i.e., two-links, flowers, and $\beta$-cycles) alone. The strategy is motivated by the inducing-support conditions that appear in zero-lifting results for multilinear polytopes~\cite{del2017polyhedral}: supports that omit overlapping hyperedges may miss relevant overlap information. Expansion is therefore a heuristic approach for incorporating more of this local overlap structure (i.e., adjacent vertices and hyperedges) into the local support, with the goal of obtaining stronger cuts.
+
+\begin{algorithm}[t]
+\caption{\textsc{ExpandedSupportStrategy}}
+\label{alg:expanded_support_mode}
+\begin{algorithmic}[1]
+\Require Hypergraph $G=(V,E)$, support $G_S=(V_S, E_S)$, hyperedge cap $M$
+\While{$|E_S|<M$ and there exists an $e'\in E\setminus E_S$ that satisfies $|e'\cap V_S|\ge 2$} \label{line:support:candidate}
+    \State Choose an eligible $e'$ of maximum overlap with $E_S$, that is,  
+    \[
+    e' :=\argmax_{e'' \in E}
+    \left\{\sum_{e\in E_S}|e''\cap e| \ :\ e'' \in E\setminus E_S,\ |e''\cap V_S|\ge 2  \right\},
+    \] \label{line:support:max_overlap}
+    \State Update $E_S \gets E_S \cup \{e'\}$ and $V_S\gets \bigcup_{e\in E_S} e$\label{line:support:update_support}
+\EndWhile
+\State \Return expanded local support $G_S=(V_S, E_S)$ 
+%\State Build the compact exact DD for the final $G_S$
+%\State Create a valid inequality that separates $\bar \bz$ form $MP_{G_S}$ using \eqref{model:target-cut} and zero-lift it
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{alg:expanded_support_mode} summarizes the expanded-support strategy. The procedure receives an initially violated local support $G_S=(V_S, E_S)$ of $G$ (found by the heuristic used in the previous strategy) and a maximum number of hyperedges $M$ that are allowed in the expanded support. It then iteratively selects an eligible hyperedge that overlaps the current vertex set and maximizes overlap with the current hyperedges (lines \ref{line:support:candidate}--\ref{line:support:max_overlap})
+% ($|e'\cap V_S|\ge 2$). Among eligible hyperedges, it chooses one maximizing
+% $
+% \sum_{e\in E_S}|e'\cap e|,
+% $ (i.e., maximizing overlap with selected hyperedges)
+and updates the local support accordingly (line \ref{line:support:update_support}). 
+%($E_S\gets E_S\cup\{e'\}$) and ($V_S\gets \bigcup_{e\in E_S}e$).
+Once the hyperedge cap is reached, we create the DD on the resulting support, find a valid inequality, and zero-lift it to the original variable space.
+
+%Algorithm~\ref{alg:expanded_support_mode} describes the expanded-support regime. The
+% purpose of expansion is to expose nearby interactions that are not visible from the seed
+% support alone. The rule is motivated by the inducing-support conditions that appear in
+% zero-lifting results for multilinear polytopes~\cite{del2017polyhedral}: supports that
+% omit overlapping hyperedges may miss relevant overlap information. Expansion is therefore
+% a heuristic way to include more of this local overlap structure in the DD, with the goal
+% of obtaining stronger cuts. It is not itself a zero-lifting or facetness guarantee.
+
+
+\paragraph{Partition-support strategy.} Unlike the other two alternatives, this strategy builds a set of local supports based on a given vertex partition, without relying on the simple local structures from known valid inequalities. For any fractional point $\bar \bz$, this strategy iterates over the pre-defined set of local supports to create one DD-based valid inequality for each local support $G_S$ where $\bar \bz \notin MP_{G_S}$. The strategy is designed such that we can: (i) test whether generic local supports can render useful cuts, and (ii) leverage the theoretical results for section hypergraphs to obtain facet-defining inequalities under suitable conditions. 
+
+Algorithm \ref{alg:partition_support_mode} summarizes the procedure for creating the local supports. First, we arbitrarily partition the set of vertices $V$ into $H$ disjoint sets $\{V_1,\ldots,V_H\}$. Then, for each vertex group $V_h$ ($h \in \{1,\ldots,H\}$), we create a local support following the \emph{contained-edge rule}, that is, consider all hyperedges that are contained in $V_h$ (i.e., $E_h=\{e\in E:e\subseteq V_h\}$). Then, by construction, each local support $G_h=(V_h,E_h)$ is a
+section hypergraph of $G$~\cite{del2017polyhedral}. 
+
+The main benefit of building a section hypergraph $G_h=(V_h,E_h)$ is that, if $V_h$ is \emph{inducing} (i.e., every $e\in E$ with $|e\cap V_h|\ge 2$ satisfies $e\cap V_h\in E$) and the resulting inequality is facet-defining for $MP_{G_h}$, then its zero-lifting is facet-defining for $MP_G$ whenever it is maximal~\cite{del2017polyhedral}. Since our DD-based CGLP \eqref{model:target-cut} can return facets of the local polytope $MP_{G_h}$ (Section~\ref{sec:dd_separation}), section-hypergraph supports are precisely the setting in which these facets can be zero-lifted to facets of the full instance.
+
+\begin{algorithm}[t]
+\caption{\textsc{PartitionSupportStrategy}}
+\label{alg:partition_support_mode}
+\begin{algorithmic}[1]
+\Require Hypergraph $G=(V,E)$, and  vertex partition $\{V_1,\ldots,V_H\}$
+\For{$h \in \{1,\ldots,H\}$}
+    \State Select edges with the contained-edge rule: $E_h\gets \{e\in E : e\subseteq V_h\}$
+    \State Create local support $G_h =(V_h, E_h)$
+\EndFor
+\State \Return set of local supports $\{G_1,\ldots, G_H\}$
+\end{algorithmic}
+\end{algorithm}
+
+%Unlike the previous two regimes, partition mode is not driven by violated literature
+% structures and is not dynamically expanded from a seed. Instead, it samples a vertex
+% partition, builds one support per block using the contained-edge rule, and applies the
+% compact DD and target-cut pipeline to each block support separately.
+% Algorithm~\ref{alg:partition_support_mode} gives the resulting procedure.
+
+%The partitions are sampled before separation for the corresponding run. Thus, unlike expanded support, partition mode does not react to a currently violated literature structure; its role is to test whether broader generic local supports can reveal useful cuts without relying on structure-specific separation.
+
+%The rule $E_S=\{e\in E:e\subseteq V_S\}$ is the contained-edge rule. It ensures that each partition supports a section hypergraph and avoids carrying hyperedges that are only partially represented within the block.
+
+%In the experiments, the block size is chosen as $r+\texttt{block\_extra}$, where $r$ is the maximum hyperedge cardinality of the instance, also known as the rank of the hypergraph. Partition mode therefore tests whether broader local supports can produce useful cuts while keeping each exact DD small enough to separate. 
+
+\bigskip
+
+We note that in our implementation, the fixed-support and expanded-support strategies are repeatedly called at the fractional point $\bar \bz$. Thus, local supports are selected dynamically, and their corresponding DDs are created in each iteration. In contrast, the partition-support strategy builds the set of local supports and their corresponding DDs at the beginning of the optimization process and reuses them whenever we want to separate a fractional point. 

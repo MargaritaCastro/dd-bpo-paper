@@ -1,0 +1,181 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2010/09/16
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{graphicx}
+%
+% \usepackage{mathptmx}      % use Times fonts if available on your TeX system
+%
+% insert here the call for the packages your document requires
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{amsmath,bm}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+
+
+% Hyperlinks and colors
+\usepackage{url}
+\usepackage[bookmarksnumbered=true]{hyperref}
+\hypersetup{
+	colorlinks,
+	linkcolor={red!50!black},
+	citecolor={blue!50!black},
+	urlcolor={blue!80!black}
+}
+
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+\newcommand{\placeholder}[1]{\textcolor{red}{\textbf{PLACEHOLDER:} #1}}
+\newcommand{\martin}[1]{\textcolor{blue}{\% \textbf{MARTIN:} #1 \%}}
+\newcommand{\mpca}[1]{\textcolor{violet}{\% \textbf{MPCA:} #1 \%}}
+\newcommand{\crev}[1]{\textcolor{blue}{#1}}
+
+%%% MACROS
+\newcommand{\SG}{\mathcal{S}_G}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\Ll}{\mathcal{L}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\Paths}{\mathcal{P}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\btheta}{\bm{\theta}}
+\newcommand{\bomega}{\bm{\omega}}
+\newcommand{\bpi}{\bm{\pi}}
+\newcommand{\st}{\text{s.t.}}
+\newcommand{\Aout}{A^{\rm out}}
+\newcommand{\Ain}{A^{\rm in}}
+\newcommand{\rt}{$r$--$t$}
+\newcommand{\var}{\operatorname{var}}
+\newcommand{\val}{\operatorname{val}}
+\newcommand{\rep}{\operatorname{rep}}
+%\newcommand{\span}{\operatorname{span}}
+\newcommand{\conv}{\operatorname{conv}}
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%
+% Insert the name of "your journal" with
+% \journalname{myjournal}
+%
+\begin{document}
+
+\title{
+Beyond Hand-Derived Inequalities: Decision Diagrams for Cut Generation in Binary Polynomial Optimization
+}
+% \title{Solving Binary Polynomial Optimization with a Decision Diagram Cutting Plane Procedure
+% %\thanks{Grants or other notes
+% %about the article that should go on the front page should be
+% %placed here. General acknowledgments should be placed at the end of the article.}
+% }
+%\subtitle{}
+
+\titlerunning{Decision Diagram Cuts for Binary Polynomial Optimization}        % if too long for running head
+
+\author{Martin Cooper         \and
+        Margarita Castro 
+}
+
+%\authorrunning{Short form of author list} % if too long for running head
+
+\institute{M. Cooper \at
+              Department of Industrial and Systems Engineering, Pontificia Universidad Católica de Chile \\
+           \and
+           M. Castro \at
+            Department of Industrial and Systems Engineering, Pontificia Universidad Católica de Chile \\
+            \email{margarita.castro@uc.cl}  
+}
+
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+\maketitle
+
+\begin{abstract}
+% 150--250 words target for MPC.
+% Suggested structure:
+% (i) problem/context,
+% (ii) what is difficult in BPO,
+% (iii) our DD-based cut framework,
+% (iv) support expansion idea,
+% (v) main computational findings,
+% (vi) takeaway.
+% Binary polynomial optimization can be represented by a hypergraph whose hyperedges encode
+% multilinear terms. This representation exposes local combinatorial structures, such as
+% flowers and odd beta cycles, that have been used in the literature to derive valid
+% inequalities for the multilinear polytope. This paper develops a framework for using
+% binary decision diagrams (DDs) as cut generators over local supports. The central
+% idea is to build DDs for selected hypergraph supports, apply a target-cut model to
+% the represented local multilinear set, and lift the resulting inequalities back to the
+% original instance with zero coefficients outside the support. We describe a compact DD
+% construction that branches on vertex variables while recovering multilinear hyperedge
+% variables implicitly along arcs, an adaptation of target cuts to this compact
+% representation, a support-expansion mechanism intended to capture nearby hypergraph
+% interactions beyond the seed literature structure, and a DD-based dimension and facet-audit
+% algorithm for the faces induced by generated cuts. The computational study compares
+% literature cuts, fixed-support DD cuts, expanded-support DD cuts, and partition-based
+% DD cuts on LABS and VISION instances under matched root-LP and branch-and-bound runs.
+
+We study cutting-plane generation for binary polynomial optimization (BPO), whose feasible region is the multilinear set of a hypergraph. Strong inequalities for this set---such as two-links, flowers, and odd $\beta$-cycles---are classically hand-derived for fixed support patterns. Instead, we propose a decision-diagram (DD) approach: for any chosen support, it separates a facet-defining cut in the local multilinear polytope and lifts it back to the original problem. We utilize a novel compact DD encoding based on a recursive formulation that represents only the vertex variables and implicitly encodes the hyperedge variables inside the state representation. From this DD encoding, we also obtain: (i) an extended formulation of the multilinear polytope, (ii) a width characterization via valid antichains that uncovers a new polynomially solvable class of hypergraphs, and (iii) a certificate for the facetness of the generated cuts. We explore three different support strategies for cut generation that reuse, expand, or partition local structures into section hypergraphs. Our empirical results show that our DD-based methodologies achieve a larger gap closure at the root node with fewer cuts than existing procedures and, in turn, markedly accelerate branch-and-bound procedures.
+
+\keywords{binary polynomial optimization \and decision diagrams \and cutting planes %\and hypergraphs %\and support expansion
+}
+\subclass{90C09 \and 90C10 \and 90C57}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_bpo_and_structures}
+\input{sections/03_dds_for_bpo}
+\input{sections/04_dd_size_and_structures}
+\input{sections/05_dd_based_separation_fixed_support}
+\input{sections/06_support_expansion}
+\input{sections/07_dimension_facet_audit}
+\input{sections/08_experimental_design}
+\input{sections/09_discussion_conclusions}
+
+\begin{acknowledgements}
+This research was partially supported by the National Center for Artificial Intelligence CENIA FB210017 (Basal ANID), and the \textit{Agencia Nacional de Investigación y Desarrollo} of Chile under grant ANID-FONDECYT-1261833.
+\end{acknowledgements}
+
+\section*{Conflict of interest}
+The authors declare that they have no conflict of interest.
+
+% BibTeX users please use one of
+\bibliographystyle{spmpsci}
+\bibliography{references}
+
+\end{document}
