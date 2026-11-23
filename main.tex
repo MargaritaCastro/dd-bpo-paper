@@ -1,0 +1,112 @@
+\documentclass[11pt,titlepage]{article}
+\usepackage{graphics,color}
+\usepackage[hmargin=2.5cm,vmargin=2.5cm]{geometry} % allows easy specifying of the page layout
+\usepackage{setspace}
+%\usepackage[pdftex]{graphicx}
+\usepackage[comma]{natbib}
+\usepackage{bbm}
+\usepackage{tikz}
+%\pgfplotsset{compat=1.8}
+\usepackage{amsmath,amsthm,amssymb,amstext,bm}
+\usepackage{appendix}
+\usepackage{cases}
+\usepackage{xr, xr-hyper}
+\usepackage[hidelinks=true]{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{todonotes}
+\usepackage{url}
+%\epstopdfsetup{suffix=}
+%\DeclareGraphicsExtensions{.eps}
+%\DeclareGraphicsRule{.eps}{pdf}{.pdf}{`ps2pdf -dEPSCrop -dNOSAFER #1 \noexpand\OutputFile}
+
+
+\setlist[itemize]{topsep=0.2cm}
+
+\allowdisplaybreaks
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ass}[thm]{Assumption}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prpty}[thm]{Property}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{exmp}{Example}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+% Set the page margins to 1 inch all around:
+\marginparwidth 0pt\marginparsep 0pt
+\topskip 0pt\headsep 0pt\headheight 0pt
+\oddsidemargin 0pt\evensidemargin 0pt
+\textwidth 6.25in \topmargin 0pt\textheight 9.0in
+\newcommand{\gurobi}{\texttt{GUR}} 
+\newcommand{\aggnet}{\texttt{AGG}} 
+\newcommand{\minnet}{\texttt{MIN}} 
+\newcommand{\alpnet}{\texttt{RALP}} 
+\newcommand{\numnets}{N}
+
+%\externaldocument[M-]{NetworkALPDiscreteOpt}
+
+\newcommand{\ccomment}[1]{\noindent  {\color{blue!50!black} #1} }
+\newcommand{\cresponse}[1]{\color{black} \begin{quote} \textit{Response:} #1 \end{quote} }
+\newcommand{\todomc}[1]{{\color{red}\%\% #1 \%\%} }
+\newcommand{\crev}[1]{{\color{blue}#1}}
+
+
+% Tables and figures
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	linkcolor={red!50!black},
+	citecolor={blue!50!black},
+	urlcolor={blue!80!black}
+}
+
+
+
+\begin{document}
+
+\begin{center}
+\Large
+\textbf{Response Letter - [Paper ID]} \\*[0.2cm]
+\textit{\normalsize
+[Paper Name]
+}
+\end{center}
+
+We sincerely thank the review team for their careful review and valuable feedback. We have revised the manuscript in accordance with all the suggestions and highlighted all the changes in \crev{blue}.
+
+Before providing our detailed responses to each comment below, we summarize the major changes, for the benefit of both the referees and the editors.
+\begin{itemize}
+    \item ....
+\end{itemize}
+
+
+%\bigskip
+	
+\clearpage
+\newpage
+
+%*********************************************************************
+%*********************************************************************
+\medskip
+%=============================
+\begin{center}
+	\textbf{RESPONSE TO xxx}
+\end{center}
+%=============================
+
+\ccomment{
+xxx comment xxx
+
+}
+
+\cresponse{
+xxx response xxx
+}
+\end{document}
