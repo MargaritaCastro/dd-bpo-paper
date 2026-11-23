@@ -1,0 +1,46 @@
+% Compact DD for the BPO instance V={v1,v2,v3}, E={e1={v1,v2}, e2={v2,v3}}.
+% Style adapted from the bdd-lifting paper: dashed grey = 0-arcs, solid black = 1-arcs.
+\begin{tikzpicture}[
+    >=Stealth, thick,
+    state node/.style={ellipse, draw, fill=gray!12, font=\scriptsize,
+                       minimum width=1.05cm, minimum height=0.55cm, inner sep=1pt},
+    zero arc/.style={draw, dashed, gray, ->, line width=0.5pt},
+    one arc/.style={draw, ->, line width=0.6pt},
+    layer label/.style={font=\scriptsize\itshape, gray}
+  ]
+
+  % --- nodes (state = active hyperedges still compatible) ---
+  \node[state node] (r)  at ( 0,    0  ) {$\emptyset$};
+  \node[state node] (u1) at (-1, -1) {$\emptyset$};
+  \node[state node] (u2) at ( 1, -1) {$\{e_1\}$};
+  \node[state node] (u3) at (-1, -2) {$\emptyset$};
+  \node[state node] (u4) at ( 1, -2) {$\{e_2\}$};
+  \node[state node] (t)  at ( 0,   -3) {$\emptyset$};
+
+  % --- layer (variable) annotations on the left ---
+  \node[layer label] at (-2,-0.5) {$v_1:$};
+  \node[layer label] at (-2,-1.5) {$v_2:$};
+  \node[layer label] at (-2,-2.5) {$v_3:$};
+
+  % --- arcs ---
+  \path
+    (r)  edge[zero arc] (u1)
+         edge[one arc]  (u2)
+    (u1) edge[zero arc] (u3)
+         edge[one arc]  (u4)
+    (u2) edge[zero arc] (u3)
+         edge[one arc]  (u4)
+    (u3) edge[zero arc, bend right=18] (t)
+         edge[one arc,  bend left=18]  (t)
+    (u4) edge[zero arc, bend right=18] (t)
+         edge[one arc,  bend left=18]  (t);
+
+  % --- legend ---
+  \node (l0a) at (2.3,-0.15) {};
+  \node[anchor=west, font=\scriptsize] (l0b) at (2.7,-0.15) {$z_{v_i}=0$};
+  \node (l1a) at (2.3,-0.65) {};
+  \node[anchor=west, font=\scriptsize] (l1b) at (2.7,-0.65) {$z_{v_i}=1$};
+  \path (l0a) edge[zero arc] (l0b.west)
+        (l1a) edge[one arc]  (l1b.west);
+
+\end{tikzpicture}

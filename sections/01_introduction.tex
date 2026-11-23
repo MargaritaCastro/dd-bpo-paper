@@ -1,0 +1,37 @@
+% ======================================================================
+\section{Introduction}
+\label{sec:introduction}
+
+Binary polynomial optimization (BPO) is a combinatorial problem that seeks a binary point that optimizes a multivariate polynomial function. The problem arises in many fields such as engineering, computer science, statistics, and
+physics~\cite{barahonaGrotschelJungerReinelt1988,borosHammer2002},
+and it generalizes well-studied special cases such as unconstrained binary quadratic
+optimization~\cite{kochenberger2014ubqp} and the maximum cut
+problem~\cite{barahonaMahjoub1986}.  
+
+Formally, the problem can be encoded by a hypergraph 
+$G=(V,E)$, in which each node $v\in V$ represents a binary variable (i.e., $z_v \in \{0,1\}$) and each hyperedge $e\in E$ represents a monomial of the objective encoded by a binary variable (i.e., $z_e \in \{0,1\}$). In what follows, we use bold notation $\bz_v= (z_v)_{v\in V}$ and $\bz_e= (z_e)_{e\in E}$ to refer to the vectors associated with vertex and hyperedge variables, respectively. Then, BPO minimizes a linear objective over the multilinear set $\SG = \left\{(\bz_v,\bz_e)\in \{0,1\}^{V\cup E} : \;
+z_e=\prod_{v\in e} z_v \ \forall e\in E\right\}$ of hypergraph $G$ \cite{del2017polyhedral}, that is,
+\begin{equation}\label{model:bpo}
+\min \left\{ \sum_{v\in V} c_v z_v + \sum_{e\in E} c_e z_e : \; (\bz_v,\bz_e) \in \SG  \right\},
+\end{equation}
+where \(c_v\) and $c_e$ are the costs associated with each vertex $v \in V$ and hyperedge $e \in E$, respectively.
+
+This problem is commonly solved by linearizing $\SG$ and strengthening the resulting relaxation with valid inequalities. Several important inequality families are tied to such hypergraph structures---including
+the two-link~\cite{cramaRodriguezHeck2017valid}, flower~\cite{delPiaKhajavirad2018acyclic},  running-intersection~\cite{delPiaKhajavirad2021running}, and odd \(\beta\)-cycle
+inequalities~\cite{delPiaDiGregorio2021chvatal,delPiaWalter2024simple}---which strengthen the standard linearization by capturing interactions among overlapping multilinear terms. At the same time, each family is hand-derived for a particular support pattern. This leaves open the question of how to generate strong inequalities once the relevant local interactions no longer fit a small catalog of named templates.
+
+To address this, decision diagrams (DDs) offer a flexible alternative for generating such general cuts. A DD is a layered directed acyclic graph whose root-to-terminal paths encode the feasible solutions of a discrete set, compactly capturing discrete structures that a linear programming (LP) relaxation does not~\cite{bergman2016decision,castroCireBeck2022survey,vanHoeve2024intro}. Building on early work that embedded DDs in a branch-and-cut framework~\cite{beckerBehleEisenbrandWimmer2005,behle2007}, Tjandraatmadja and van Hoeve~\cite{tjandraatmadjaVanHoeve2019target} introduce \emph{target cuts}: given a DD, they separate inequalities that are facet-defining for the convex hull of the points it encodes, so the strength of the cut is governed by how faithfully the DD models the relevant substructure. Other related DD-based schemes include an outer approximation procedure for non-linear problems~\cite{davarniaVanHoeve2021outer} and the combinatorial cut-and-lift for binary problems~\cite{castroCireBeck2022cutLift}, while specialized procedures have also been developed, for instance, to generate cuts for stochastic optimization~\cite{casassus2025decision,lozano2022binary,macneil2024leveraging}. 
+
+This makes DDs an appealing engine for BPO: rather than deriving a valid inequality for each named support pattern, one can build a DD for a chosen support hypergraph and generate target cuts that expose its local interactions; thus, yielding a single mechanism that is both stronger and more versatile than any fixed template. Moreover, we can show that the resulting cuts are facet-defining for the support hypergraph and, under certain conditions, facets of the original problem.  
+
+To generate such DD-based cuts, we present a novel compact DD encoding for BPO. Specifically, we present a recursive model over a given vertex order, in which vertex variables are explicitly represented as arcs in the diagram, while hyperedge variables are implicitly encoded within the problem's state representation. Then, the DD is a compact state-space representation of such a recursive model, and the target cut procedure is adapted to account for the implicit hyperedge variables.
+
+Moreover, we use the DD representation beyond cut generation to: (i) create a novel extended formulation for BPO, (ii) uncover new hypergraph structures that can be solved in polynomial time, and (iii) build certificates for facet-defining constraints. Specifically, we adapt the DD-based network flow formulation to obtain an extended formulation that accounts for both vertex and hyperedge variables. We also analyze the DD size (i.e., the node count) by characterizing the number of states in the recursive model via valid antichains. This allows us to prove that several known structures (e.g., flowers and cycles) can be represented by a DD of bounded size. Furthermore, we define a new family of hypergraphs that lead to polynomial-size DDs, and, as such, can be solved in polynomial time using, for example, the DD-based extended formulation. Lastly, we develop a novel procedure to determine whether a DD-based cut is facet-defining by computing its dimensionality over the support of the DD, and we use existing theoretical results~\cite{del2017polyhedral} to prove that it is a facet in the original problem.
+
+We instantiate this framework with three strategies for choosing the local support fed to the separator: a \emph{fixed-support} baseline that reuses the supports of known literature
+inequalities, an \emph{expanded-support} rule that grows a seed support by overlap, and a \emph{partition-support} scheme that builds section hypergraphs from a vertex partition and is backed by zero-lifting guarantees. We evaluate these strategies on standard benchmarks from the literature (i.e., the LABS and VISION datasets), on which we observed a clear superiority of our procedures over existing methods. Specifically, expanded and, especially, partition
+supports close substantially more of the root gap with far fewer cuts---up to $92.4\%$ of the
+gap on LABS and the full gap on VISION---and these stronger relaxations carry over to
+branch-and-bound (B\&B), where the partition setting gives the best practical performance.
+
+The remainder of the paper is as follows. Section~\ref{sec:bpo_and_structures} states the BPO linear formulation and the most commonly used cutting planes from the literature. Section~\ref{sec:dds_for_bpo} introduces the compact DD encoding of BPO and its extended formulation. Section~\ref{sec:bdd_size_structures} characterizes the size of the compact DD through valid antichains, analyzes the DD size for different hypergraph structures, and uncovers a new hypergraph family that can be solved in polynomial time. Section~\ref{sec:dd_separation} describes the target-cut separation over our compact DD encoding, and Section~\ref{sec:support_expansion} introduces support expansion and partition strategies. Section~\ref{sec:dimension_facet_audit} develops the dimension and facet-audit procedure. Lastly, Section~\ref{sec:experimental_design} describes the computational experiments, and Section~\ref{sec:discussion} concludes our work.

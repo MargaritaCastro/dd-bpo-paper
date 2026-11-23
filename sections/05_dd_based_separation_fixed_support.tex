@@ -1,0 +1,42 @@
+\section{Target cuts over compact DDs}
+\label{sec:dd_separation}
+
+We now present the cut generator linear program (CGLP) that creates valid inequalities using our compact DD encoding introduced in Section \ref{sec:dds_for_bpo}. As previously mentioned, there are several cut generation procedures specifically designed to separate a fractional point from a convex set encoded as a DD \cite{beckerBehleEisenbrandWimmer2005,behle2007,castroCireBeck2022cutLift,davarniaVanHoeve2021outer}. In this work, we opt to use DD-based target cuts~\cite{tjandraatmadjaVanHoeve2019target}, due to their simple implementation and their guarantee of facet-defining inequalities.
+
+Broadly, given a fractional point $\bar \bz$ to separate and a fixed interior point $\bomega$ of the polytope represented by the DD, the target cuts procedure~\cite{buchheimLiersOswald2008localcuts} searches over the translated polar of that polytope for the valid inequality of maximum violation in the direction from $\bomega$ to $\bar \bz$. The correspondence between DDs and polarity allows this polar to be optimized compactly over the DD network flow model~\cite{tjandraatmadjaVanHoeve2019target}, and whenever the returned solution is an extreme point of the polar, the associated inequality is facet-defining for the represented polytope. As with the extended formulation of Section~\ref{sec:dds_for_bpo}, the CGLP of~\cite{tjandraatmadjaVanHoeve2019target}  assumes that every variable appearing in the cut is represented explicitly in the DD. Our compact DD, however, branches only on the vertex variables $\bz_v$ and recovers the hyperedge variables $\bz_e$ implicitly along its states, so the standard target-cut CGLP does not apply directly. We now present the extension to our compact DD encoding.
+
+In what follows, let $B=(N,A)$ be the compact DD encoding 
+for a hypergraph $G=(V,E)$, so $B$ is exact for $\SG$ and therefore represents $MP_G$. Recall from Section~\ref{sec:dds_for_bpo} that, for each arc $a\in A$ leaving layer $N_i$ ($i \in \{1,\ldots,n\}$), $\var(a)=v_i$ is the associated vertex, $\val(a)\in\{0,1\}$ its assigned value, and $\E_1(a)$ the set of hyperedges that take value one on arc $a$. Throughout, let $\bomega\in\operatorname{int}(MP_G)$ be a fixed interior point; since $MP_G$ is full-dimensional~\cite{del2017polyhedral} and $\bomega$ lies in its interior, the translated polar $(MP_G-\bomega)^\circ$ is bounded and the CGLP below attains its optimum.
+
+Consider continuous variables $\bu\in\mathbb{R}^{V\cup E}$ and $\btheta\in\mathbb{R}^N$ and define arc sets associated with $0$ and $1$ assignments as $A^1=\{a\in A:\val(a)=1\}$ and $
+A^0=\{a\in A:\val(a)=0\}$, respectively. Given a fractional point $\bar \bz=(\bar \bz_v,\bar \bz_e)\in\mathbb{R}^{V\cup E}$, the target-cut CGLP for our compact DD encoding is as follows, where $r$ and $t$ denote the root and terminal nodes of $B$, respectively:
+%
+\begin{subequations}\label{model:target-cut}
+\begin{align}
+\max \quad & \bu^\top(\bar \bz-\bomega)\\
+\text{s.t.}\quad
+& \theta_j
+\le \theta_i
+- u_{\var(a)}
+- \sum_{e\in\E_1(a)} u_e
+&& \forall a=(i,j)\in A^1,
+\label{eq:tc-bdd-one-arc}\\
+& \theta_j \le \theta_i
+&& \forall a=(i,j)\in A^0,
+\label{eq:tc-bdd-zero-arc}\\
+& \theta_r = 1 + \bu^\top\bomega,
+&&
+\label{eq:tc-bdd-root}\\
+& \theta_t = 0.
+&&
+\label{eq:tc-bdd-terminal}
+\end{align}
+\end{subequations}
+
+Constraints \eqref{eq:tc-bdd-one-arc}--\eqref{eq:tc-bdd-root} encode the translated
+polar. Note that an arc $a\in A$ with $\val(a)=1$ (i.e., inequalities \eqref{eq:tc-bdd-one-arc}) contributes the coefficient of the assigned vertex and the coefficients of all hyperedges assigned to one on that arc; while the remaining arcs contribute nothing. %The hyperedge term $\sum_{e\in\E_1(a)} u_e$, absent from the standard target-cut model, is the extension that accounts for the hyperedge variables recovered implicitly along the arcs of the compact DD. 
+Summing the arc contributions along an $r$--$t$ path recovers $\bu^\top \bz$ for point $\bz$, so the model enforces $\bu^\top(\bz-\bomega)\le 1$ for every point of $MP_G$.
+
+Model~\eqref{model:target-cut} has $O(|A|)$ constraints and $|V|+|E|+|N|$ variables, so its size is polynomial in the size of $B$; together with the structural results of Section~\ref{sec:bdd_size_structures}, a bounded valid-antichain width yields polynomial-time separation. As in the target-cut framework, if the optimal value of \eqref{model:target-cut} is at most $1$, then the DD yields no violated target cut. Otherwise, the resulting inequality $ \bu^\top \bz \le 1 + \bu^\top\bomega $ is valid for the represented polytope $MP_G$ and cuts off $\bar\bz$.
+
+Since multilinear polytopes are full-dimensional for every hypergraph \cite{del2017polyhedral}, the translated polar has the usual facet correspondence~\cite{buchheimLiersOswald2008localcuts}. If the solution returned by \eqref{model:target-cut} is an extreme point of $(MP_G-\bomega)^\circ$, then the associated inequality corresponds to a facet of the represented polytope $MP_G$. In particular, a unique optimum is sufficient for this conclusion. If the optimum is degenerate, the returned inequality remains valid, but facetness is not automatic unless an extreme optimal solution is selected.

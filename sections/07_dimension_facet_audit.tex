@@ -1,0 +1,147 @@
+\section{Dimension and facet audit for DD cuts} 
+\label{sec:dimension_facet_audit}
+
+%DDs have a wide variety of uses in mathematical programming \cite{castroCireBeck2022survey}, ranging from cut generation \cite{behle2007,tjandraatmadjaVanHoeve2019target,castroCireBeck2022cutLift} to facet enumeration \cite{behle2007facets}. 
+We now present a novel approach for computing the dimension of the face induced by a valid inequality for the polytope encoded by a DD. We present the procedure in general terms and then extend it to the compact DD encoding introduced in Section \ref{sec:dds_for_bpo}. We then show how to use this procedure to obtain facet-defining certificates for our cuts, which we employ in Section \ref{sec:experimental_design} as a quality measurement.
+
+
+We now present the notation used throughout this section. Consider a set $Q\subseteq\{0,1\}^n$ and let $\dim(Q)$ be its dimension. We say that an inequality $\bpi^\top \bz\le \pi_0$ is \emph{valid} for $\conv(Q)$ if it holds for every $\bz\in Q$, and its associated face is $F(\bpi)=\{\bz\in \conv(Q) : \bpi^\top \bz=\pi_0\}$. If $F(\bpi)\neq\emptyset$ and $\dim(F(\bpi))=\dim(Q)-1$, then $F(\bpi)$ is a \emph{facet} of $\conv(Q)$.
+
+In what follows, we introduce vector notation to represent the value associated with an arc, which is amenable to our DD-based dimension certificate procedure. Let $B=(N,A)$ be a DD representing $Q$. Recall from  Section~\ref{sec:dds_for_bpo} that  $\var(a) \in V$ and $\val(a)\in\{0,1\}$ are the vertex and value associated with arc $a \in A$, respectively. Then, define the vector contribution of an arc $a \in A$ as $\chi(a) = \be^{\var(a)}$ if $\val(a)=1$ and $\chi(a) = \bzero$ otherwise, where $\be^{q}$ denotes the q-th canonical (unit) vector ($q \leq n$) and $\bzero$ the zero vector of $\mathbb{R}^n$. Then, for a valid inequality $\bpi^\top \bz\le \pi_0$ of $Q$, we define the \emph{scalar arc length} of arc $a \in A$ as $\ell_\pi(a)= \bpi^\top\chi(a)$, where  $\ell_\pi(a)= \pi_{\var(a)}$ if $\val(a)=1$ and  $\ell_\pi(a)= 0$ otherwise. 
+
+Throughout this section, lowercase $p$ denotes a \emph{partial path} (i.e., a sequence of arcs) over $B=(N,A)$ from root node $r$ to a given node $u \in N$, while uppercase $P$ denotes a complete \rt\ path. Then, for any partial path $p$, define $z(p)=\sum_{a\in p}\chi(a)$ as its vector encoding, i.e., a vector that encodes all the decisions for arcs $a \in p$ but sets to zero all decisions after the last arc represented in $p$. Note that if $p = P$ (i.e.,  an \rt\ path) then $z(P)$ is the binary point encoded by $P$.
+
+\subsection{Tight arcs and dimension certificate}
+\label{subsec:tight_arc_identification}
+
+We now present our DD-based dimension certificate for a DD $B=(N,A)$ that exactly represents $Q$ and a valid inequality $\bpi^\top\bz \leq \pi_0$ with $F(\bpi) \neq \emptyset$. The overall idea is to work over the arcs and paths in $B$ where $\bpi^\top\bz = \pi_0$ and then collect a set of difference vectors whose rank equals the dimension of $F(\bpi)$.
+
+First, we identify the arcs in $B$ that are associated with the binary points in $F(\bpi)$, which we call \emph{tight arcs}. Consider top-down and bottom-up longest-path values for any node $u \in N$ as $ L^\uparrow(\bpi,u) =\max\left\{\sum_{a\in p}\ell_\pi(a): p \text{ is an } r\text{--}u \text{ path}\right\}$ and $ L^\downarrow(\bpi,u)= \max\left\{\sum_{a\in p}\ell_\pi(a): p \text{ is a } u\text{--}t \text{ path}\right\} $, respectively \cite{tjandraatmadjaVanHoeve2019target,castroCireBeck2022cutLift}. 
+Then, we say that an arc $a=(u,u')$ is a tight arc if it belongs to at least one tight \rt\ path, that is, if $L^\uparrow(\bpi,u)+\ell_\pi(a)+L^\downarrow(\bpi,u')=\pi_0$, so that the longest path traversing arc $a$ has length $\pi_0$. For each stage $i\in\{1,\ldots,n\}$, let $A^\pi_i$ be the set of outgoing arcs in layer $N_i$ that are tight, and let $A^\pi=\bigcup_{i =1}^n A^\pi_i$ be the set of tight arcs. Lastly, let $\Paths_\pi(r,u)$ denote the set of $r$--$u$ paths that are prefixes of at least one tight \rt\ path.
+
+\begin{algorithm}[t]
+\caption{\textsc{DD-DimensionCertificate}}
+\label{alg:dd_dimension_audit}
+\begin{algorithmic}[1]
+\Require Exact DD $B=(N,A)$, valid inequality $\bpi^\top \bz\le \pi_0$ with $F(\bpi)\neq \emptyset$ 
+\Ensure Dimension of  $F(\bpi)$
+\State Create the sub-diagram $B^\pi= (N^\pi, A^\pi)$ induced by $A^\pi$ \label{line:dim:create_dd}
+\State Set $\rep[u]\gets$ undefined for all $u\in N^\pi$,  $\rep[r]\gets \bzero$, and $\M\gets\emptyset$
+\For{each layer $i \in \{1, \ldots, n\}$}
+    \For{each arc $a=(u,u')\in A^\pi_i$}
+        \State $\operatorname{cand}\gets \rep[u]+\chi(a)$\label{line:dim:create_candidate}
+        \If{$\rep[u']$ is undefined} 
+            \State $\rep[u']\gets \operatorname{cand}$ \label{line:dim:set_candidate}
+        \Else
+            \State add $\operatorname{cand}-\rep[u']$ to $\M$ \label{line:dim:add_to_M}
+        \EndIf
+    \EndFor
+\EndFor
+\State \Return $\operatorname{rank}(\M)$
+\end{algorithmic}
+\end{algorithm}
+
+Our DD-based dimension certificate algorithm, summarized in Algorithm \ref{alg:dd_dimension_audit}, uses the sub-diagram $B^\pi= (N^\pi, A^\pi)$ of $B$ induced by the tight arcs $A^\pi$ (i.e., $N^\pi =\{r\}\cup \{ u \in N: \ \exists a \in A^\pi \text{ s.t. $a\in \Ain(u)$ } \}$) (line \ref{line:dim:create_dd}). The algorithm traverses $B^\pi$ starting at the root $r$ and maintains, for each node $u\in N^\pi$, a representative vector $\rep[u]$ equal to the encoding $z(p_u)$ of a single tight prefix path from $r$ to $u$. It starts from $\rep[r]=\bzero$ and processes the tight arcs layer by layer, so that $\rep[u]$ is already available when the outgoing arcs of $u$ are examined. When a tight arc $a=(u,u')$ reaches $u'$ for the first time, the algorithm fixes $\rep[u']=\rep[u]+\chi(a)$, extending the prefix chosen for $u$ along $a$ (lines \ref{line:dim:create_candidate}--\ref{line:dim:set_candidate}); these first-visit arcs form a spanning tree of $B^\pi$ rooted at $r$. Every other tight arc into an already-represented node $u'$ yields an alternative tight prefix reaching $u'$, and the discrepancy $\operatorname{cand}-\rep[u']=(\rep[u]+\chi(a))-\rep[u']$ between the two encodings is added to the matrix $\M$ (lines \ref{line:dim:create_candidate} and \ref{line:dim:add_to_M}). As shown by Lemma \ref{lem:dd_dimension_invariant} and Theorem \ref{thm:dimension_certificate}, each such vector is a difference of two tight \rt\ path vectors, and these differences span their entire linear space; hence the algorithm returns $\operatorname{rank}(\M)$, which equals the dimension of $F(\bpi)$. The proof uses the concatenation operation $\circ$ to augment a path: if $p' = (a_1,\ldots, a_k)$ is a partial path with $k$ arcs, then  $p = p' \circ a = (a_1,\ldots, a_k, a)$.
+
+
+\begin{lemma}
+\label{lem:dd_dimension_invariant}
+In Algorithm~\ref{alg:dd_dimension_audit}, every representative vector $\rep[u]$, with $u \in N^\pi$, equals $z(p_u)$ for some partial path $p_u\in\Paths_\pi(r,u)$. Moreover, for every node $u \in N^\pi$ and partial path $p\in\Paths_\pi(r,u)$, $z(p)-\rep[u]\in\operatorname{span}(\M)$.
+\end{lemma}
+
+\begin{proof}
+We proceed by induction over the layers. The claim is immediate at the root $r$, where
+$\rep[r]=\bzero$, which corresponds to $z(r)$ and $\bzero \in \operatorname{span}(\M)$ for any matrix $\M$. Then, consider the hypothesis true for all nodes in layer $N^\pi_i$, and take any arc $a=(u,u')\in A^\pi$ with $ u \in N^\pi_i$,  $p=p'\circ a$, with $p'\in\Paths_\pi(r,u)$. Then, $z(p)=z(p')+\chi(a)$, and, by the induction hypothesis, $z(p')-\rep[u]\in\operatorname{span}(\M)$.
+
+If $\rep[u']$ is undefined, the algorithm sets $\rep[u']=\rep[u]+\chi(a)=z(p_u\circ a)$, with $p_u\circ a\in\Paths_\pi(r,u')$, which establishes the first claim for $u'$. Hence 
+$z(p)-\rep[u']
+=
+z(p')+\chi(a)-\bigl(\rep[u]+\chi(a)\bigr)
+=
+z(p')-\rep[u]$, which belongs to $\operatorname{span}(\M)$ by the induction hypothesis.
+
+If $\rep[u']$ is already defined, the algorithm adds $\delta_a=\rep[u]+\chi(a)-\rep[u'] $ to $\M$. Therefore,
+\[
+\begin{aligned}
+z(p)-&\rep[u']
+=z(p')+\chi(a)-\rep[u'] \\
+&=\bigl(z(p')-\rep[u]\bigr)
++\bigl(\rep[u]+\chi(a)-\rep[u']\bigr) =\bigl(z(p')-\rep[u]\bigr)+\delta_a,
+\end{aligned}
+\]
+which belongs to $\operatorname{span}(\M)$ since it is the sum of two vectors in $\operatorname{span}(\M)$. \hfill $\square$
+\end{proof}
+
+\begin{theorem} \label{thm:dimension_certificate}
+Algorithm~\ref{alg:dd_dimension_audit} returns the dimension of $F(\bpi)$ over $\conv(Q)$.
+\end{theorem}
+
+\begin{proof}
+
+Since DD $B$ exactly represents $Q$, the extreme points of $F(\bpi)$ are exactly the vectors $z(P)$ for tight \rt\ paths $P \in \Paths_\pi(r,t)$; thus $F(\bpi)=\conv(\{z(P):\ P \in \Paths_\pi(r,t) \})$. By Lemma~\ref{lem:dd_dimension_invariant}, $z(P)-\rep[t]\in\operatorname{span}(\M)$ for every such $P$. Therefore, we conclude that $\dim(F(\bpi)) \leq \operatorname{rank}(\M)$.
+
+For the reverse inclusion, we show that every vector added to $\M$ is the difference of two tight \rt\ path vectors. Consider a vector $\rep[u]+\chi(a)-\rep[u']$ added to $\M$ while processing an arc $a=(u,u')$. By Lemma~\ref{lem:dd_dimension_invariant}, $\rep[u]=z(p_u)$ for some $p_u\in\Paths_\pi(r,u)$ and $\rep[u']=z(p_{u'})$ for some $p_{u'}\in\Paths_\pi(r,u')$. Now choose any tight $u'$--$t$ path $q$ and consider $P' = p_u\circ a\circ q$ and $P = p_{u'}\circ q$. 
+
+Recall that any path in $\Paths_\pi(r,w)$ has length $L^\uparrow(\bpi,w)$, since $w\in N^\pi$ lies on a tight path. Therefore, both $P'$ and $P$ are tight \rt\ paths because $p_u$ and $p_{u'}$ have lengths $L^\uparrow(\bpi,u)$ and $L^\uparrow(\bpi,u')$, $q$ is tight, and $a$ is a tight arc. Then,
+\[
+\begin{aligned}
+z(P')-z(P)
+&=z(p_u)+\chi(a)+z(q)-z(p_{u'})-z(q)\\
+&=\rep[u]+\chi(a)-\rep[u'].
+\end{aligned}
+\]
+The common suffix cancels, so the vector added to $\M$ by Algorithm~\ref{alg:dd_dimension_audit} (line \ref{line:dim:add_to_M}) is a difference of two tight \rt\ path vectors. Hence $\operatorname{span}(\M)$ is contained in the linear span of all differences of $z(P)$ for $P \in \Paths_\pi(r,t)$. Together with the first inclusion, this gives $\dim(F(\bpi))=\operatorname{rank}(\M)$. \hfill $\square$
+\end{proof}
+
+
+We now adapt Algorithm \ref{alg:dd_dimension_audit} to the compact DD encoding for BPO. Specifically, given a compact DD $B=(N,A)$ for a hypergraph $G=(V,E)$, we need to adjust the definitions of $\chi(a)$ for $a\in A$ to account for the hyperedge variables. Recall, from 
+Section~\ref{sec:dds_for_bpo}, that
+$\E_1(a)$ is the set of hyperedge variables $\bz_e$ assigned value one on arc $a\in A$. Then, for an arc $a\in A$, we redefine $\chi(a) = \be^{\var(a)}+\sum_{f\in\mathcal{E}_1(a)}\be^{f}$ when  $\val(a)=1$ and $\chi(a)=\bzero$ otherwise. Thus, $\chi(a)$ is a vector of dimension $|V|+|E|$ that accounts for both vertex and hyperedge variables assigned in such an arc. 
+%The scalar arc length of $a \in A$ is given by $\ell_\pi(a) =\bpi^\top\chi(a)$, where $\bpi^\top\chi(a) = \pi_{\var(a)} +\sum_{f\in\mathcal{E}_1(a)} \pi_f$ if $\val(a)=1$ and zero otherwise. 
+The rest of the definitions and steps of the algorithm (e.g., $\ell_\pi(a)$) follow from the new  $\chi(a)$ definition. Note that since $MP_G$ has full dimension (i.e., $\dim(MP_G)=|V|+|E|$)~\cite{del2017polyhedral}, any valid inequality is facet-defining for $MP_G$ if Algorithm~\ref{alg:dd_dimension_audit} returns $|V|+|E|-1$.
+
+\subsection{The $I_K$ certificate and zero lifting}
+\label{subsec:local_facet_zero_lifting}
+
+Algorithm \ref{alg:dd_dimension_audit} provides a global facet test for $MP_G$ when applied to the hypergraph instance $ G = (V,E)$; however, it is impractical for large instances. We therefore use the certificate over local supports used for cut generation (see Section \ref{sec:dd_separation}), and the zero-lifting theory~\cite{del2017polyhedral}. The resulting test is conservative: if it succeeds, the cut is certified to be a global facet of $MP_G$; if it fails, the global status is unknown.
+
+Del Pia and Khajavirad~\cite{del2017polyhedral} show that when a local support is an inducing section hypergraph, a zero-lifted local facet remains facet-defining for the larger multilinear polytope if and only if it is maximal for the larger hypergraph. Their Corollary~6 can be used as a conservative certificate even when the original support is not inducing by completing the support with the required intersection hyperedges, auditing the cut on this completed support, and then checking maximality.
+
+For a valid inequality $\bpi^\top \bz\le \pi_0$, consider $K=G(\bpi)$  to be its support hypergraph, in which its hyperedge set is $E_K=\{e\in E : \pi_e\ne 0\}$, and its vertex set is $V_K=
+\{v\in V : \pi_v\ne 0\}
+\cup
+\{v\in V : \exists e\in E \text{ with } v\in e,\ \pi_e\ne 0\}$.
+Let $G_K$ be the section hypergraph of the full instance $G=(V,E)$ induced by $V_K$, that is, $V_{G_K}=V_K$ and $E_{G_K}=\{e\in E : e\subseteq V_K\}$. Then, define the intersection completion hypergraph as $I_K=(V_K,E_{I_K})$ with hyperedge set  $E_{I_K}= E_{G_K}\cup\{e\cap V_K : e\in E,\ |e\cap V_K|\ge 2\}$, where duplicate hyperedges are removed and hyperedges in $E_{I_K}\setminus E_{G_K}$ correspond to auxiliary certificate hyperedges. To audit the cut on $I_K$, we zero-extend $\bpi$ by assigning a coefficient of zero to every auxiliary hyperedge in $E_{I_K}\setminus E_K$.
+
+The remaining ingredient is the maximality check. Maximality is violated if there exists a decomposition obtained by multiplying the local inequality by a monomial involving variables outside the selected subhypergraph and then linearizing the resulting expressions. This test is performed first, before the remaining certificate checks, using the finite criterion of Del Pia and Khajavirad~\cite{del2017polyhedral}, based on their Proposition~7 and Lemma~2. If the maximality test fails, the candidate inequality is rejected as a facet of the full multilinear polytope; otherwise, the audit proceeds to the remaining certificate checks.
+
+
+
+\begin{algorithm}[t]
+\caption{\textsc{GlobalFacetAuditViaIK}}
+\label{alg:ik_certificate_audit}
+\begin{algorithmic}[1]
+\Require Full hypergraph $G=(V,E)$, cut $\bpi^\top \bz\le \pi_0$
+\Ensure Certification status for global facetness
+\If{Cut is non-maximal}\label{line:ik:maximality}
+    \State \Return non-maximal; classify the cut as a global nonfacet
+\EndIf
+\State Build the compact DD $B_{I_K}$ over $I_K$\label{line:ik:build-ik}
+\State $d \gets \textsc{DD-DimensionCertificate}(B_{I_K},\bpi^\top \bz\le \pi_0)$\label{line:ik:audit-ik}
+\If{$d = |V_K| + |E_{I_K}| - 1$}\label{line:ik:rank-ik}
+    \State \Return certified global facet by the $I_K$ certificate
+\EndIf
+\If{Exact global DD is computationally feasible}\label{line:ik:global-feasible}
+    \State Build the compact exact global DD $B_{G}$\label{line:ik:build-global}
+    \State $d_G \gets \textsc{DD-DimensionCertificate}(B_G,\bpi^\top \bz\le \pi_0)$\label{line:ik:audit-global}
+    \If{$d_G = |V| + |E| - 1$}\label{line:ik:rank-global}
+        \State \Return certified global facet by direct global audit
+    \Else
+        \State \Return certified global nonfacet by direct global audit
+    \EndIf
+\EndIf
+\State \Return unknown global status
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{alg:ik_certificate_audit} presents the complete procedure. It first checks the maximality (line~\ref{line:ik:maximality}); if the inequality is non-maximal, it is classified as a global nonfacet for this audit. If maximality passes, the algorithm builds the DD $B_{I_K}$ and runs Algorithm~\ref{alg:dd_dimension_audit} on it (lines~\ref{line:ik:build-ik}--\ref{line:ik:audit-ik}). The rank test (line~\ref{line:ik:rank-ik}) checks the dimension of the cut's face; if it equals $|V_K|+|E_{I_K}|-1$, the cut is certified as a global facet by the $I_K$ certificate. If this local certificate fails, the algorithm attempts a direct global audit when the exact DD for the complete problem can be built. The final rank test (line~\ref{line:ik:rank-global})  certifies either global facetness or global nonfacetness. If the global DD is not computationally feasible, the global status remains unknown.

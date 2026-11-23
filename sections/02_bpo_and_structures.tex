@@ -1,0 +1,49 @@
+\section{Binary polynomial optimization and existing cutting planes}
+\label{sec:bpo_and_structures}
+
+
+We now present the integer linear programming (ILP) formulation commonly used in the literature to solve the BPO problem \eqref{model:bpo} and review existing cutting-plane approaches for tightening it. Recall that instances of BPO can be encoded by a hypergraph $G=(V, E)$, where we assume  $|e|\ge 2$ for every $e\in E$, as linear terms are represented directly by the vertex variables. The standard linearization replaces the multilinear equalities encoded in $\SG$ with two sets of linear inequalities, resulting in the following model~\cite{fortet1960algebre,gloverWoolsey1974converting}:
+%
+\begin{subequations}\label{model:bpo-linear}
+	\begin{align}
+		\min & \sum_{v\in V} c_v z_v + \sum_{e\in E} c_e z_e \label{eq:bpo-objective} \\
+		\st\  & z_e \le z_v & \forall e\in E,\ v\in e,\\
+		& z_e \ge \sum_{v\in e} z_v - |e| + 1 &\forall e\in E, \\
+		& z_v, z_e \in \{0,1\} &\forall v\in V,\ e\in E. \label{eq:bpo-binary-vars}
+	\end{align}
+\end{subequations}
+
+Note that the optimal value of problem \eqref{model:bpo} can be obtained by optimizing over the multilinear polytope, denoted as $ MP_G=\conv(\SG)$, where $\conv(\cdot)$ is the convex hull operator of a set. Similarly, model \eqref{model:bpo-linear} optimizes over the same set, but by representing the multilinear set with linear inequalities. Relaxing \eqref{eq:bpo-binary-vars} with continuous variables yields the standard  LP relaxation, denoted by
+$MP_G^{LP}$. This is the base relaxation used throughout this paper, which is later strengthened by cutting-plane algorithms.
+
+\subsection{Valid linear inequalities to strengthen $MP_G^{LP}$}
+\label{subsec:literature_inequalities}
+
+It is well-known that $MP_G^{LP}$ is a weak relaxation of $MP_G$, and the gap between them is driven by interactions among overlapping hyperedges~\cite{cramaRodriguezHeck2017valid,del2017polyhedral}. Thus, several works have identified special hypergraph structures to build valid inequalities that separate fractional points from $MP_G$. We now briefly review three families of such techniques that provide natural points of comparison for our proposed DD-based procedure. Moreover, we use such structures as a basis to construct more complex support hypergraphs for our own DD-based cuts (see Section \ref{sec:support_expansion}). We refer the reader to the sources for all theoretical and algorithmic details. 
+
+\paragraph{Two-link inequalities~\cite{cramaRodriguezHeck2017valid}.} A two-link
+is a pair of hyperedges $e,f\in E$ with $e\neq f$ and $e\cap f\neq\emptyset$. The corresponding inequality couples the two overlapping monomials $e,f\in E$ as follows:
+\[
+\sum_{v\in f\setminus e} z_v + z_e - z_f \le |f\setminus e|.
+\]
+
+\paragraph{Flower inequalities~\cite{delPiaKhajavirad2018acyclic}.}
+A flower consists of a center hyperedge $f\in E$ and a nonempty set
+$T\subseteq E\setminus\{f\}$ of hyperedges denoted as petals. Each petal meets the center (i.e., $(e\cap f)\neq\emptyset \ \; \forall e\in T$) and the petal-center intersections are pairwise disjoint (i.e., $(e\cap f)\cap(e'\cap f)=\emptyset \ \; \forall e\ne e'\in T$). Then, the inequality is given by:
+%
+\[
+\sum_{v \in f \setminus \cup_{e \in T} e} z_v + \sum_{e \in T} z_e - z_f
+\le
+\left|f \setminus \bigcup_{e \in T} e\right| + |T| - 1.
+\]
+Intuitively, a flower generalizes a two-link by relating the center to several petals at
+once rather than one at a time. When the underlying support is $\gamma$-acyclic, the flower inequalities together with the standard linearization fully describe $MP_G$~\cite{delPiaKhajavirad2018acyclic}. We note that running-intersection 
+inequalities~\cite{delPiaKhajavirad2021running} are a strict generalization of the flower inequalities, differing only in the more general overlap patterns of (kite-free) $\beta$-acyclic supports. Therefore, we consider only flower inequalities in our empirical comparison.
+
+
+\paragraph{Odd $\beta$-cycle inequalities~\cite{delPiaDiGregorio2021chvatal}.}
+Structurally, a $\beta$-cycle consists of distinct hyperedges
+$(e_1,\ldots,e_k)$ and vertices $(v_1,\ldots,v_k)$, indexed cyclically, such
+that $v_i\in e_i\cap e_{i+1}$ for every $i$, while nonconsecutive hyperedges in the
+sequence do not intersect. Odd $\beta$-cycle inequalities are associated with odd such
+cycles and require additional parity or sign data beyond this intersection pattern. We note that for our comparison, we use the regular odd $\beta$-cycle inequalities~\cite{delPiaDiGregorio2021chvatal}, not the simple odd $\beta$-cycle variant of Del Pia and Walter~\cite{delPiaWalter2024simple}, which is a weakened version of the former.
