@@ -73,9 +73,9 @@
 
 \begin{center}
 \Large
-\textbf{Response Letter - [Paper ID]} \\*[0.2cm]
+\textbf{Response Letter - MAPR-D-26-00375} \\*[0.2cm]
 \textit{\normalsize
-[Paper Name]
+Beyond Hand-Derived Inequalities: Decision Diagrams for Cut Generation in Binary Polynomial Optimization
 }
 \end{center}
 
@@ -97,16 +97,648 @@ Before providing our detailed responses to each comment below, we summarize the 
 \medskip
 %=============================
 \begin{center}
-	\textbf{RESPONSE TO xxx}
+	\textbf{RESPONSE TO THE ASSOCIATE EDITOR}
 \end{center}
 %=============================
 
 \ccomment{
-xxx comment xxx
+\textbf{Comment AE.1.} I have received two referee reports, both recommending major revision.
 
+The first referee is positive and finds the material publishable in Mathematical Programming after revision. Both referees view the main idea, using exact decision diagrams over chosen local supports as separation oracles for binary polynomial optimization, as useful and general.
+
+The second referee, however, raises substantial concerns. Several contributions are adaptations of known machinery, and some claims are overstated, in particular the new polynomially solvable class and the facet-defining guarantee. Most importantly, the computational comparison omits the strongest available separation methods. This referee also asks for a more accessible presentation.
 }
 
 \cresponse{
-xxx response xxx
+TODO
 }
+
+\ccomment{
+\textbf{Comment AE.2.} I recommend major revision, and the authors should address all comments of both referees. I agree with the second referee that the theoretical contributions alone are not sufficient for Mathematical Programming, so the paper must stand on its computational results. The revised version must include a controlled comparison with the strongest known relaxations, including exact separation of running-intersection and simple odd beta-cycle inequalities and the clique relaxation of Khajavirad and Wang (INFORMS J. Comput., 2026). It can be considered for acceptance only if this comparison shows a clear and consistent advantage, in root gap closed relative to computing time, on LABS and on at least one other benchmark where known inequality families are insufficient, and if this advantage carries over to branch-and-bound under the solver's default settings.
+}
+
+\cresponse{
+TODO
+}
+
+% NOTE: In "Associate Editor.md" this paragraph appears under the heading
+% "Overall assessment". Its wording ("in my view") suggests it may be
+% Reviewer 2's overall assessment. Check the original decision letter.
+\ccomment{
+\textbf{Comment AE.3 (Overall assessment).} The paper offers a useful and general tool, and its LABS results suggest a genuine advantage on dense instances where known inequality families struggle. However, it presents an adaptation of known machinery as more novel than it is, overstates a theoretical result, and builds its strongest computational evidence on a benchmark already solved at the root by exact RI separation, while omitting the exact separators available for RI and simple odd $\beta$-cycle inequalities, the presentation is dense and readers unfamiliar with DD-based cutting planes would benefit from more explanation.
+
+I recommend major revision. If, after the requested comparisons, the DD cuts clearly outperform exact running intersection inequalities and simple odd $\beta$-cycle separation on LABS and other dense families, in gap closed per unit of time, the paper would merit publication. If they do not, the remaining contributions (the compact encoding, the width analysis and the facet audit) would in my view not suffice for a top-tier journal.
+}
+
+\cresponse{
+TODO
+}
+
+\clearpage
+\newpage
+
+%*********************************************************************
+%*********************************************************************
+\medskip
+%=============================
+\begin{center}
+	\textbf{RESPONSE TO REVIEWER 1}
+\end{center}
+%=============================
+
+% Reviewer 1 sent no written report; all comments are annotations on the
+% manuscript PDF. Page/line numbers refer to the submitted manuscript.
+
+\ccomment{
+\textbf{Comment R1.1} (Abstract, l.~21, on ``two-links''). In the literature, they are called 2-links.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.2} (Section~1, p.~3, l.~36--37, on the sentence ``Specifically, expanded and, especially, partition supports close substantially more of the root gap with far fewer cuts\ldots''). This phrase is quite hard to read.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.3} (Section~4.2, proof of Proposition~1, p.~11, l.~27, on ``order any remaining vertices of $e_0 \setminus \bigcup_{j=1}^m e_j$''). Redundant? The set difference yields precisely the remaining vertices. Maybe ``(remaining) vertices'' or so is clearer.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.4} (Section~4.3, proof of Proposition~3, p.~14, l.~26, on ``We now show the converse also fails''). ``that'' missing?
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.5} (Section~5, p.~15, l.~44, on ``a bounded valid-antichain width yields polynomial-time separation''). You should mention poly-time solvability of LPs.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.6} (Section~5, p.~15, l.~52--58, model~(4)). Later you examine your generated cuts for being facet-defining. Is there any way to construct a solution that yields an extreme-point of the projection onto the $u$-space?
+
+Isn't there a correspondence between tight arcs (for your certificate) and tight constraints (4b), (4c)? So if you would construct a basic solution then there should [be] dimension-many binding (and thus tight) constraints and should get linear/affine independence for free since it is a basis.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.7} (Section~5, p.~16, l.~1--6, on ``If the solution returned by (4) is an extreme point of $(MP_G-\boldsymbol{\omega})^\circ$\ldots''). Worth to mention that an extreme point solution of (4) does not necessarily yield an extreme point of the translated polar (because (4) is only an extended formulation).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.8} (Section~6, partition-support strategy, p.~17, l.~49, on ``whenever it is maximal [17]''). You don't explain maximality here. It is difficult to define that in one sentence, but you should rephrase it such that the reader does not think that they should have seen the definition before in the paper.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.9} (Section~7.1, p.~20, l.~1--5, on ``the discrepancy cand $-$ rep$[u']$''). ``cand'' reads like a word. Please clarify that you mean the variable in the algorithm (maybe refer to line 5).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.10} (Section~7.1, proof of Lemma~2, p.~20, l.~15, on ``for any matrix $\mathcal{M}$''). $\mathcal{M}$ is a set of vectors, not a matrix, right?
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.11} (Section~7.2, Algorithm~4, line~11, p.~22, l.~10--12). How can the cut be locally not facet-defining but then globally a facet? I somehow don't understand how line 11 can occur at all. Probably I misunderstand something here!
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.12} (Section~7.2, p.~22, l.~17--35, on ``the candidate inequality is rejected as a facet of the full multilinear polytope''). I understand that it is not a facet in this case. However, can't you then just lift the inequality to the maximal one? The non-maximal inequality is the sum of two other inequalities, which arise by multiplication with a product (or 1 minus a product) and then linearizing. But this should mean that whenever the non-maximal inequality is tight that then both summand inequalities are tight as well, i.e., the non-maximal inequality's face is the intersection of these facets. So you should be able to do a (non-zero) lifting in this case. Or am I missing something?
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.13} (Section~8.1, p.~23, l.~11--17, description of PT$q$). Maybe I missed it, but how do you exactly partition $V$ into $V_1, V_2, \ldots, V_H$?
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.14} (Section~9, p.~29, l.~4--38, first two paragraphs of the conclusions). These first two paragraphs simply summarize and are essentially a reproduction of intro and results sections. They are also not needed to explain the interesting parts that come below. Without any need I recommend to remove them unless you add new research questions or new insights that require them to be understandable.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.15} (Section~9, p.~29, l.~47, on ``the randomized nature of the PT family''). This is the first occurrence of ``random'' in the paper. Please explain this already in the core sections!
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R1.16} (Section~9, p.~30, l.~4--5, on ``our procedure can be seen as a research tool in its own right''). If it is a tool -- do you also share its implementation?
+}
+
+\cresponse{
+TODO
+}
+
+\clearpage
+\newpage
+
+%*********************************************************************
+%*********************************************************************
+\medskip
+%=============================
+\begin{center}
+	\textbf{RESPONSE TO REVIEWER 2}
+\end{center}
+%=============================
+
+\ccomment{
+\textbf{Comment R2.0 (Summary and strengths).} The paper uses exact decision diagrams (DDs), built on local sub-hypergraphs, as separation oracles for the multilinear polytope $MP_G$ of binary polynomial optimization (BPO). The contributions are:
+\begin{itemize}
+\item a compact DD encoding that branches only on vertex variables and recovers hyperedge variables from the states, which also yields an extended formulation of $MP_G$;
+\item an adaptation of the target-cut CGLP of Tjandraatmadja \& van Hoeve [32] to this encoding;
+\item a characterization of DD width through ``valid antichains'', with bounded-width results for flowers and cycles and a claimed new polynomially solvable class;
+\item a DD-based algorithm computing the dimension of the face induced by a valid inequality, used to audit the facetness of the cuts;
+\item three support-selection strategies (fixed, expanded, partition), evaluated in a cut-and-branch scheme on the LABS and VISION benchmarks.
+\end{itemize}
+Strengths
+\begin{itemize}
+\item The compact encoding is natural and well suited to BPO.
+\item Corollary 1 ($\mathrm{VAW}(G)=2^{\mathrm{pw}(G)}$ for graphs) is a clean link between the DD width and a classical parameter.
+\item The dimension certificate (Algorithm 3) is simple, correct, and applicable beyond BPO.
+\item Viewing a DD as a ``black-box separator over a chosen support'' is a good idea. The fixed-support experiment is a sensible sanity check.
+\item The LABS results look promising (see major comment 3), on instances known to be hard for existing families of inequalities.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+%-----------------------------------------------------------------
+\medskip
+\noindent\textbf{Major comments}
+\medskip
+
+\ccomment{
+\textbf{Comment R2.1 Novelty and positioning.}\\
+\textbf{Comment R2.1(a) (Target cuts and local cuts).} Target cuts over DDs are known (Tjandraatmadja \& van Hoeve, 2019). Separating over the exact convex hull of a small substructure and lifting the result is the classical local-cuts paradigm (Applegate et al.; Buchheim, Liers \& Oswald, 2008).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.1(b) (Adaptation of the CGLP).} Adapting the CGLP to implicit hyperedge variables only changes the arc weights in the longest-path constraints.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.1(c) (New parts versus adaptations).} The authors should state clearly which parts are new and which are adaptations. In particular:
+\begin{itemize}
+\item Is the DP model of Section 3.1, with only vertex variables in the decisions, original, or does it follow existing work? If the latter, please cite it.
+\item Section 5 should explain explicitly, for readers not familiar with [32], how the CGLP differs from [32].
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.1(d) (Comparison with existing extended formulations).} The extended formulation of Section 3.2 should be compared with existing extended formulations for BPO, in particular the knowledge-compilation approach of Capelli, Del Pia \& Di Gregorio [9].
+\begin{itemize}
+\item That work already obtains polynomial-size extended formulations for BPO from d-DNNF representations, of which OBDDs are a special case.
+\item Although [9] appears in the bibliography, it is cited only in Sections 4.2--4.3. It is not cited where the extended formulation is introduced, nor in the abstract and introduction, where the formulation and the facet certificate are listed as contributions.
+\item The authors should discuss what the compact DD encoding adds with respect to [9].
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.2 Theoretical claims.}\\
+\textbf{Comment R2.2(a) (Theorem 1 and the ``new polynomially solvable class'').}
+\begin{itemize}
+\item Theorem 1 follows directly from its assumptions: if an order of polynomial width exists, the DD has polynomial size. It reads more like a technical lemma than a theorem, and it does not by itself exhibit a new class.
+\item Polynomial solvability also requires that such an order can be found in polynomial time, which is not discussed.
+\item The hypergraph used in Proposition 3 to show that bounded VAW does not imply bounded incidence treewidth, $E=\{A\cup\{b\}: b\in B\}$, lies in a well-understood class, since it is $\beta$-acyclic (it is even gamma-acyclic in fact).
+\item Similarly, the first family in Proposition 3 (complete binary trees) is Berge-acyclic, and for such hypergraphs the standard linearization is already integral [18].
+\item The authors should therefore exhibit a natural family with bounded VAW that is not covered by known tractable classes, such as $\beta$-acyclic hypergraphs or hypergraphs of bounded incidence treewidth [9]. Otherwise the claim of a ``new polynomially solvable class'' should be removed from the abstract, the introduction and the conclusions.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.2(b) (Polynomial-time separation).} The statement that bounded VAW yields polynomial-time separation is, I believe, the actual complexity result. If the authors consider it a contribution, it should be stated as a proposition with its precise scope. Note, however, that it follows immediately from the polynomial-size extended formulation (3).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.2(c) (Proposition 1).}
+\begin{itemize}
+\item It assumes that petals are pairwise disjoint outside the center. The flower definition of Section 2 does not require this, so the proposition covers only a subclass of flowers.
+\item Moreover, the pairwise-disjointness of the petal-center intersections can itself be relaxed [16].
+\item The proof should adapt to the more general setting, and I encourage the authors to cover it.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.2(d) (Literature structures).} It is not clear which ``cycles'' are meant: $\beta$-cycles as defined in Section 2, or cycle hypergraphs as defined in Section 4.2. The authors should state explicitly which literature results their propositions generalize and which they do not. This is only briefly addressed after Proposition 2.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.2(e) (Width parameters, Section 4.3).} Pathwidth and incidence treewidth are different notions. Please state the known relation between them, and say which graph's pathwidth is meant for hypergraphs of higher rank (the intersection graph?).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.3 Exactness, facetness and the local separation.}\\
+\textbf{Comment R2.3(a) (Exact separation).} Since the DD is exact for the support, an optimal CGLP value of at most 1 should imply $\bar z_S\in MP_{G_S}$, that is, the separation over the local polytope is exact. Please state this explicitly. As written, a reader may wonder whether a violated cut could still exist.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.3(b) (Facetness).} The abstract states that the method ``separates a facet-defining cut''. This holds only if the CGLP returns an extreme point of the polar.
+\begin{itemize}
+\item Does a simplex vertex of (4), which also contains the $\theta$ variables, always project to an extreme point of the polar?
+\item Uniqueness of the optimum is sufficient (p. 16), but how can it be checked efficiently?
+\item Please explain how extremality is ensured in practice, or soften the claim.
+\item The introduction (p. 3, l. 2--5) should also say what can be said about cuts that are not facet-defining: they are still valid (I suppose).
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.3(c) (The interior point $\omega$).} Target cuts depend on $\omega$. Please discuss whether this choice is recommended in [7, 32], and how sensitive the results are to it.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.3(d) (Zero-lifting guarantees).} The partition strategy is said to be ``backed by zero-lifting guarantees''. These require the blocks $V_h$ to be inducing, which the contained-edge rule does not ensure. Please report how often the blocks are inducing, and discuss the fact that hyperedges crossing blocks are ignored entirely.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.3(e) (Cost of the certificate).} Please state the complexity of Algorithms 3 and 4, in particular the rank computation and the construction of the DD over $I_K$.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.4 Baselines and the state of the art.} This is my main concern.\\
+\textbf{Comment R2.4(a) (VISION).} The paper takes the VISION instances from [20] but does not report that paper's results.
+\begin{itemize}
+\item In [20], running-intersection inequalities are separated exactly, in $O(|E|^2)$ for fixed rank.
+\item Embedded in BARON, this solves all 44 solvable VISION instances at the root node.
+\item The headline result, full root-gap closure on VISION, is therefore not evidence of superiority over the state of the art and should be presented as a sanity check.
+\item The LT baseline closes 95.8\% of the root gap and leaves five instances unsolved, so it is weaker than what is known for this benchmark.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.4(b) (Running-intersection inequalities).} The authors exclude them because they generalize flowers (p. 5, l. 16--17). This reasoning is backwards: the more general family is precisely the right baseline, and it is known to be computationally stronger [20]. Moreover, separating flowers is NP-hard for general rank, whereas exact separation is polynomial for fixed rank, which covers all instances here.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.4(c) (Odd $\beta$-cycle inequalities).} The baseline uses regular odd $\beta$-cycles of length 3 only, separated heuristically.
+\begin{itemize}
+\item On a fixed cycle, regular inequalities dominate the simple ones of [21]. However, the simple ones can be separated exactly, for any cycle length, in strongly polynomial time, provided flowers with at most two neighbours are satisfied.
+\item {[21]} reports that they generate no cuts on VISION but close substantial additional root gap on LABS, at a high separation cost.
+\item They are therefore the natural baseline on the instances where the paper claims its main advantage.
+\item {[21]} reports about 74--77\% root-gap closure on LABS with flowers and simple odd $\beta$-cycles, while the paper reports up to about 92\%.
+\item These numbers are not directly comparable, since the instance sets, base relaxation, solver and stopping rules all differ. But if the gain is confirmed in a controlled comparison, it would be the paper's strongest result.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.4(d) (How the baseline is separated).} The paper says it uses ``well-known separators'' (p. 23, l. 9) and a heuristic search (Section 6) for two-links, flowers and $\beta$-cycles. Please specify the separation routines. Not all of these families can be separated efficiently, and the quality of the heuristic directly affects both LT and the seeds of FS and EX.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.4(e) (Requested experiments).} I ask the authors to:
+\begin{itemize}
+\item[(i)] add exact running intersection separation and exact simple odd $\beta$-cycle separation, on top of flowers with at most two neighbours, as baselines on all instance sets, in the same LP and solver setting;
+\item[(ii)] report both gap closed and separation time, possibly also under a common time budget;
+\item[(iii)] also compare against Gurobi's default settings, since \texttt{Cuts=0} is not how a practitioner would run it;
+\item[(iv)] revise the abstract and conclusions so that the claims rest on instances where known families are insufficient.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.5 Experimental methodology.}\\
+\textbf{Comment R2.5(a) (Strength of the claims).} On LABS, every method solves 10 or 11 of 22 instances. The claim that the cuts ``markedly accelerate'' B\&B is supported only on VISION, where it is not informative (see comment 4).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.5(b) (Reporting).} Please state whether B\&B times include root separation. Please also report DD sizes (nodes and width per support), CGLP times, DD construction times and the vertex orders used.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.5(c) (Partitions).} The partition strategy is randomized, but results come from a single run. Please report results over several seeds with variance, explain how partitions are generated, and discuss whether a structure-aware choice of partition could do better.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.5(d) (Scope).} The algorithm is cut-and-branch with root cuts only, while running intersection cuts were evaluated at every node of BARON. This should be stated clearly and taken into account in comparisons.
+}
+
+\cresponse{
+TODO
+}
+
+%-----------------------------------------------------------------
+\medskip
+\noindent\textbf{Presentation and accessibility}
+\medskip
+
+\ccomment{
+\textbf{Comment R2.6 (How the DDs fit into the cutting-plane and B\&B framework).} It would be nice to explain this a bit more, for readers coming from polyhedral B\&B rather than from the DD literature. In particular, the paper should make clear:
+\begin{itemize}
+\item that an exact DD represents the integer hull of its support exactly, and that the fractional points come from the LP relaxation of the full problem, not from the DDs;
+\item that the cuts are added to that LP, not to the DDs;
+\item whether several DDs coexist, whether they are rebuilt at each round, and whether any single DD accumulates information.
+\end{itemize}
+A short paragraph or a small diagram of the overall loop at the start of Section 6 would help considerably, together with the clarification requested above on how the CGLP differs from [32].
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.7 (Density of definitions).} The paper introduces many notions: active, compatible and reduced hyperedges, valid antichains, ideals, $\Gamma$-sets, $\mathcal L_i$, $\mathcal E_0(a)$, $\mathcal E_1(a)$, and others. They are not unnecessary, but they are not easy to digest. I suggest:
+\begin{itemize}
+\item one running example, richer than Example 1 (which has at most two nodes per layer), that illustrates all of these notions, not only chains;
+\item showing, in Example 1, a few root-terminal paths with the corresponding points $(z_v, z_e)$;
+\item an example where a layer has more nodes, which would also motivate the sets $\Gamma^1_j,\Gamma^0_j$.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8 The DP model (Section 3.1).}\\
+\textbf{Comment R2.8(a) (Terminology).} The text calls $z_{v_i}$ the ``state variable at stage $i$'', whereas in DP terms it is the decision, and the subset $s_i$ is the state (isn't it?).
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8(b) (``Compatible'').} The term suggests the existence of a feasible completion. Such a completion always exists here (set the remaining vertices to zero), but a more precise term might be preferable.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8(c) (The transition function).} The definition of $\phi_i$ is correct but hard to parse, and its verbal description does not match the formula.
+\begin{itemize}
+\item For $e\in\mathcal A_i$, the condition ``$e\notin\mathcal A_{i-1}$'' is equivalent to $e\cap U_{i-1}=\emptyset$, since $e\subseteq U_{i-1}$ would contradict $e\in\mathcal A_i$. It therefore identifies hyperedges that become active at stage $i$, and for these $v_i\in e$ necessarily holds.
+\item The second condition then reduces to $z_{v_i}=1$ for newly active hyperedges, and is trivially satisfied by carried-over hyperedges not containing $v_i$.
+\item I suggest writing the transition explicitly as
+\[
+\phi_i(s_{i-1},z_{v_i})=\{e\in\mathcal A_i : e\cap U_{i-1}=\emptyset,\ z_{v_i}=1\}\ \cup\ \{e\in s_{i-1}\cap\mathcal A_i : v_i\notin e \text{ or } z_{v_i}=1\}.
+\]
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8(d) (Hyperedges leaving the state).} In the same place, the authors should state that hyperedges in $\mathcal L_i$ leave the state, with $z_e=1$ if and only if $e\in s_{i-1}$ and $z_{v_i}=1$. At present, a hyperedge whose last missing vertex is $v_i$ is not covered by the definition of $\phi_i$, and its treatment through $\mathcal L_i$ only appears later in the text.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8(e) (``First'' and ``second'' condition).} The phrases ``the first condition'' and ``the second condition'' in the following paragraph should be aligned with this decomposition.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.8(f) (Redundant sentence).} The sentence ``ignores them if we have already assigned all vertices associated with a specific hyperedge'' is redundant, since active hyperedges exclude fully assigned ones by definition.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.9 Valid antichains (Section 4.1).}\\
+\textbf{Comment R2.9(a) (Ideal).} The ideal is taken within $(\mathcal R_i,\subseteq)$, which in general is not the full Boolean lattice used in the running example. Please make this explicit.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.9(b) (Reachable states).} The sentence ``not every antichain encodes a reachable state'' could be illustrated directly.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.9(c) (Proof of Lemma 1).} In the proof of Lemma 1, ``the corresponding ideal'' should be defined formally.
+}
+
+\cresponse{
+TODO
+}
+
+\ccomment{
+\textbf{Comment R2.9(d) (Bijection in Lemma 1).} Lemma 1 identifies states with sets of reduced hyperedges. Please state explicitly that distinct hyperedges with the same reduced set are always simultaneously compatible, so that the bijection is well defined.
+}
+
+\cresponse{
+TODO
+}
+
+%-----------------------------------------------------------------
+\medskip
+\noindent\textbf{Minor comments}
+\medskip
+
+\ccomment{
+\textbf{Comment R2.10 (Minor comments).}
+\begin{itemize}
+\item (p. 1, abstract). The facet certificate is presented as a contribution. Please indicate its cost and whether it is easy to verify (see comment 3).
+\item (p. 2, l. 39--41). Target cuts are facet-defining for the convex hull of the points the DD encodes. In the BPO setting, please clarify that this is $MP_{G_S}$ of the support, not $MP_G$.
+\item (p. 2, l. 48--49). The contrast between a ``named support pattern'' and a ``chosen support'' is unclear. Both are supports; the difference is in how the inequality is obtained.
+\item (p. 3, l. 33--40). The claim of ``clear superiority over existing methods'' should be revised in light of comment 4.
+\item (p. 8, l. 46--47). ``The size of a DD, which translates directly to DD width'': the width is defined from the layer sizes, so the implication seems to go the other way.
+\item (p. 9, l. 47--49 and p. 10). The layer indexing is inconsistent. Lemma 1 associates layer $N_i$ with the assignment of $U_i$, whereas the proof of Theorem 1 uses $|\mathrm{VA}_{i-1}(\sigma)|$ for $N_i$.
+\item (p. 11, l. 41--42). ``At most two reachable states'': please name them ($\emptyset$ and $\{\rho_i(e_0)\}$).
+\item (p. 12, l. 5--7). Could the bound of Proposition 2 be improved by ordering the vertices of $e_0\setminus e_L$ before those of $e_0\cap e_L$?
+\item (p. 14, Proposition 3). The incidence treewidth of the second family is unbounded only if both $p$ and $q$ grow: the incidence graph contains $K_{p,q}$, whose treewidth is $\min(p,q)$. Please state this. See also comment 2 on the acyclicity of both families.
+\item (p. 16, l. 40--42). The ``edge-overlap graph'' is the line graph (intersection graph) of the hypergraph. Please use the standard name.
+\item (p. 19, Algorithm 3). ``Exact DD'': all DDs in the paper are exact, so either drop the qualifier or explain the contrast with relaxed DDs.
+\item (p. 21, l. 4--15). It would be simpler to state Algorithm 3 directly for the compact encoding.
+\item (``Facet audit''). The term is unusual; ``facetness certificate'' or ``facet check'' may be clearer. On p. 4, l. 1, ``dimension'' should say of what: the face induced by the cut.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
+%-----------------------------------------------------------------
+\medskip
+\noindent\textbf{Typos and editorial corrections}
+\medskip
+
+\ccomment{
+\textbf{Comment R2.11 (Typos and editorial corrections).}
+\begin{itemize}
+\item (p. 1, abstract, l. 22). ``hand-derived for fixed support patterns'' $\rightarrow$ ``hand-derived from fixed support patterns''?
+\item (p. 2, l. 22). Specify $c_v, c_e \in \mathbb R$.
+\item (p. 2, l. 34). ``such general cuts'': ``such'' has no antecedent.
+\item (p. 3, l. 11--12). ``the target cut procedure'' $\rightarrow$ cite [32] here.
+\item (p. 4, l. 34). Spacing between $M$ and $P$ in $MP_G^{LP}$.
+\item (p. 5, l. 38). The subscript in $X_B$ is used before $B$ is defined.
+\item (p. 8, l. 34--36). Check the index range in the definition of width.
+\item (p. 9, l. 23). ``ignoring all vertices except\ldots'': ignoring for what purpose? Please rephrase.
+\item (p. 9, l. 39--45). The explanation of valid antichains is awkwardly phrased; the example helps.
+\item (p. 10, l. 26). ``algorithmic primitive'' is unclear.
+\item (p. 10, l. 34--35). Use $:=$ for the definitions of $W(\sigma)$ and $\mathrm{VAW}(G)$.
+\item (p. 10, l. 45--48). $n$ and $|V|$ are used interchangeably; use one.
+\item (p. 11, l. 14). Flower inequalities are not ``based on'' flowers; they are defined on exactly these structures.
+\item (p. 11, l. 15). ``thus, also attractive'': remove ``also''.
+\item (p. 11, l. 18--19). Section 2 denotes the center and petals by $f$ and $T$; Section 4 uses $e_0, e_1,\dots,e_m$. Please unify.
+\item (p. 11, l. 32--33). ``While the order is processing'' $\rightarrow$ ``While the vertices of \ldots{} are assigned''.
+\item (p. 11, l. 41). ``have closed'' $\rightarrow$ ``are no longer active''.
+\item (p. 11, l. 46). ``Let $G$ be a cycle'' $\rightarrow$ ``a cycle hypergraph''.
+\item (p. 11, l. 49). Introducing $L$ with $|E|=L+1$ adds an unnecessary symbol.
+\item (p. 13, l. 41). ``prefixes'' is used here for the first time; $U_i$ was introduced earlier as ``the first $i$ vertex decisions''.
+\item (p. 15, l. 12). ``so $B$ is exact'': ``so'' suggests a consequence that does not follow from the preceding sentence.
+\item (p. 15, l. 50). ``the usual facet correspondence'': please state it or cite precisely.
+\end{itemize}
+}
+
+\cresponse{
+TODO
+}
+
 \end{document}
